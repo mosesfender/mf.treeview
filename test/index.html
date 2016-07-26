@@ -1,32 +1,15 @@
-<?php
-/* @var $this yii\web\View */
-
-mosesfender\articles\assets\ArtAsset::register($this);
-?>
-
+<script src="../../mf.framework/source/mf.framework.js" type="text/javascript"></script>
+<script src="../source/mf.treeview.js" type="text/javascript"></script>
 <div id="art_conductor"></div>
 <script>
     window.onload = function () {
         /* @var c {mf.MFTreeView} */
         c = new mf.MFTreeView(document.getElementById('art_conductor'), {
-            onLoadTreeData: function (d) {
-                function fillTree(parent, data) {
-                    for (var i = 0; i < data.length; i++) {
-                        var nd = new mf.MFTreeNodeData();
-                        mf.extend(nd, data[i]);
-                        var node = new mf.MFTreeNode(parent, nd);
-                        if (nd.children.length > 0) {
-
-                        }
-                    }
-                }
-                var root = new mf.MFTreeNodes(this.node);
-                fillTree(root, d.detail.children);
-            },
             onDrawNode: function (e) {
                 console.log(e.detail);
             }
         });
-        c.loadData('/art/conductor/tree');
+        c.on
+        c.loadData('tree.json');
     };
 </script>

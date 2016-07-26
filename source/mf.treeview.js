@@ -9,11 +9,12 @@
         this.element = element;
         this.element.setAttribute('data-anc', 'mftv');
         mf.extendEx(this, options, ['templates']);
-        if(options.templates){
-            for(var p in options.templates){
+        if (options.templates) {
+            for (var p in options.templates) {
                 this.templates[p] = options.templates[p];
             }
-        };
+        }
+        ;
         mf.on(this.element, 'onCreate', this.onCreate);
         mf.on(this.element, 'onDrawNode', this.onDrawNode);
         mf.on(this.element, 'onDrawRoot', this.onDrawRoot);
@@ -22,7 +23,6 @@
         this.element.node = this;
         //return this;
     };
-
     mf.MFTreeView.prototype = {
         element: {},
         treeNodes: {},
@@ -41,6 +41,17 @@
             });
             req.send();
         },
+        fillTree: function (parent, data) {
+            for (var i = 0; i < data.length; i++) {
+                var nd = new mf.MFTreeNodeData();
+                mf.extend(nd, data[i]);
+                var node = new mf.MFTreeNode(parent, nd);
+                if (nd.children.length > 0) {
+                    var root = new mf.MFTreeNodes(node);
+                    this.fillTree(root, node.data.children);
+                }
+            }
+        },
         /* listeners */
         onCreate: function (e) {
             //console.log(this, e);
@@ -51,11 +62,16 @@
         onDrawRoot: function (e) {
             //console.log(this, e);
         },
-        onLoadTreeData: function(e){
-            //console.log(e.detail);
+        /**
+         * @var this {HTMLElement->mf.MFTreeNode.node.element}
+         * @param {onLoadTreeData} e
+         * @returns {undefined}
+         */
+        onLoadTreeData: function (e) {
+            var root = new mf.MFTreeNodes(this.node);
+            this.node.fillTree(root, e.detail.children);
         }
     };
-
     mf.MFTreeView.prototype.templates = {
         defNodesClass: 'mf-nodes',
         defNodeClass: 'mf-node',
@@ -68,7 +84,6 @@
             return ret;
         }
     };
-
     /**
      * 
      * @param {mf.MFTreeView} owner
@@ -83,7 +98,6 @@
         this.create();
         return this;
     };
-
     mf.MFTreeNode.prototype = {
         element: null,
         owner: null,
@@ -99,12 +113,11 @@
             mf.fire(this.owner.element, 'onDrawNode', {detail: this});
         }
     };
-    
-    mf.MFTreeNodes = function(parent){
-        this.owner = parent.hasOwnProperty('owner')? parent.owner : parent;
+    mf.MFTreeNodes = function (parent) {
+        this.owner = parent.hasOwnProperty('owner') ? parent.owner : parent;
         this.parent = parent;
         this.element = null;
-        this.create = function(){
+        this.create = function () {
             this.render();
             return this;
         }

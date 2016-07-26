@@ -1,0 +1,58 @@
+{
+    "children":
+            [
+                {
+                    "caption": "Node 1",
+                    "nodeType": "ntCat",
+                    "id": 456,
+                    "expanded": true,
+                    "children": [
+                        {
+                            "caption": "Node 1.1",
+                            "nodeType": "ntArt",
+                            "id": 123,
+                            "expanded": true,
+                            "children": [
+                            ]
+                        }, {
+                            "caption": "Node 1.2",
+                            "nodeType": "ntArt",
+                            "id": 123645568,
+                            "expanded": true,
+                            "children": [
+                                {
+                                    "caption": "Node 1.2.1",
+                                    "nodeType": "ntArt",
+                                    "id": 123,
+                                    "expanded": true,
+                                    "children": [
+                                    ]
+                                }, {
+                                    "caption": "Node 1.2.2",
+                                    "nodeType": "ntArt",
+                                    "id": 123645568,
+                                    "expanded": true,
+                                    "children": [
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }, {
+                    "caption": "Node 2",
+                    "nodeType": "ntCat",
+                    "id": 456645,
+                    "expanded": true,
+                    "children": [
+                        {
+                            "caption": "Node 2.1",
+                            "nodeType": "ntArt",
+                            "id": 56123,
+                            "expanded": true,
+                            "children": [
+                            ]
+                        }
+                    ]
+                }
+            ]
+}
