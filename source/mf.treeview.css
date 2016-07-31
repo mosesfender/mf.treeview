@@ -1,0 +1,25 @@
+[data-anc="mftv"] {
+    position: relative;
+    border: 1px dotted silver;
+    width: 100%;
+    height: 100%;
+    -moz-user-select: none;
+    -o-user-select:none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+[data-anc="mftv"] li {
+    cursor: pointer;
+}
+
+[data-anc="mftv"] li > span:hover {
+    background-color: #ffffbb;
+    color: brown;
+}
+
+[data-anc="mftvnav"] {
+    position: absolute;
+}

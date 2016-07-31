@@ -1,13 +1,46 @@
 /* global mf */
 
 (function () {
+    if (!window.mf)
+        return false;
+
+    mf.attrAnc = 'data-anc';
+    mf.ancTreeView = 'mftv';
+    mf.ancTreeNode = 'mftvn';
+    mf.ancTreeNodeAvatar = 'mftvnav';
+    mf.attrExpanded = 'data-expanded';
+
+    /**
+     * 
+     * @returns {mf.MFTreeView} 
+     */
+    function tv() {
+        if(arguments.length){
+            var obj = arguments[0];
+            if(typeof obj == 'object'){
+                if('clientHeight' in obj){
+                    return obj.closest(sprintf('[%s="%s"]', mf.attrAnc, mf.ancTreeView)).node.owner;
+                }
+                if(obj.hasOwnProperty('owner')){
+                    return obj.owner;
+                }
+            }
+        }
+    }
+
     mf.MFTreeView = function (element, options) {
+        if (!options || options == undefined)
+            options = {};
         this.init = function (options) {
             mf.fire(this.element, 'onCreate', {detail: this});
             return this;
         };
         this.element = element;
-        this.element.setAttribute('data-anc', 'mftv');
+        this.element.setAttribute(mf.attrAnc, mf.ancTreeView);
+        this.element.setAttribute('unselectable', 'on');
+        this.element.onselectstart = function () {
+            return false;
+        };
         mf.extendEx(this, options, ['templates']);
         if (options.templates) {
             for (var p in options.templates) {
@@ -19,6 +52,9 @@
         mf.on(this.element, 'onDrawNode', this.onDrawNode);
         mf.on(this.element, 'onDrawRoot', this.onDrawRoot);
         mf.on(this.element, 'onLoadTreeData', this.onLoadTreeData);
+        mf.on(this.element, 'mousedown, onmousedown', this.onMouseDown);
+        mf.on(this.element, 'mouseup, onmouseup', this.onMouseUp);
+        mf.on(this.element, 'mousemove, onmousemove', this.onMouseMove);
         this.init(options);
         this.element.node = this;
         //return this;
@@ -51,6 +87,16 @@
                     this.fillTree(root, node.data.children);
                 }
             }
+            //preventSelection(this.element);
+        },
+        _createAvatar: function (e) {
+            mf.dragElement.avatar = mf.dragElement.cloneNode(true);
+            mf.dragElement.avatar.setAttribute(mf.attrAnc, mf.ancTreeNodeAvatar);
+            this.element.appendChild(mf.dragElement.avatar);
+            console.log(mf.dragElement);
+        },
+        _destroyAvatar: function () {
+            this.element.removeChild(mf.dragElement.avatar);
         },
         /* listeners */
         onCreate: function (e) {
@@ -70,6 +116,30 @@
         onLoadTreeData: function (e) {
             var root = new mf.MFTreeNodes(this.node);
             this.node.fillTree(root, e.detail.children);
+        },
+        /* node listeners */
+        onMouseDown: function (e) {
+            if (e.which !== 1)
+                return;
+            var el = e.target.closest(sprintf('[%s="%s"]', mf.attrAnc, mf.ancTreeNode));
+            if (!el) {
+                return;
+            } else {
+                mf.dragElement = el;
+                mf.dragElement.sX = e.pageX;
+                mf.dragElement.sY = e.pageY;
+                if (!mf.dragElement.avatar) {
+                    mf.dragElement.node.owner._createAvatar(e);
+                }
+            }
+        },
+        onMouseUp: function (e) {
+            //this.node._destroyAvatar();
+            //mf.dragElement = null;
+        },
+        onMouseMove: function (e) {
+            if (!mf.dragElement)
+                return;
         }
     };
     mf.MFTreeView.prototype.templates = {
@@ -109,6 +179,7 @@
         },
         render: function () {
             this.element = this.owner.templates.node(this.parent.element, this.data);
+            this.element.setAttribute(mf.attrAnc, mf.ancTreeNode);
             this.element.node = this;
             mf.fire(this.owner.element, 'onDrawNode', {detail: this});
         }
@@ -140,5 +211,7 @@
         expanded: false,
         children: []
     };
+
+    mf.MFTreeView.prototype.version = '0.0.1a';
 })();
 

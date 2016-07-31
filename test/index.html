@@ -1,15 +1,15 @@
+<link href="../source/mf.treeview.css" rel="stylesheet" type="text/css"/>
 <script src="../../mf.framework/source/mf.framework.js" type="text/javascript"></script>
 <script src="../source/mf.treeview.js" type="text/javascript"></script>
-<div id="art_conductor"></div>
+<div style="width: 50%; height: 50%;">
+    <div id="art_conductor"></div>
+</div>
 <script>
     window.onload = function () {
-        /* @var c {mf.MFTreeView} */
-        c = new mf.MFTreeView(document.getElementById('art_conductor'), {
-            onDrawNode: function (e) {
-                console.log(e.detail);
-            }
-        });
-        c.on
-        c.loadData('tree.json');
+        try {
+            new mf.MFTreeView(document.getElementById('art_conductor')).loadData('tree.json');
+        } catch (e) {
+            console.error('MF Framework is not available');
+        }
     };
 </script>
