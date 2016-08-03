@@ -23,3 +23,8 @@
 [data-anc="mftvnav"] {
     position: absolute;
 }
+
+[data-selected="true"] > span {
+    background-color: #2222ff;
+    color: #ffffbb;
+}

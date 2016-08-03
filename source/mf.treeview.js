@@ -9,19 +9,20 @@
     mf.ancTreeNode = 'mftvn';
     mf.ancTreeNodeAvatar = 'mftvnav';
     mf.attrExpanded = 'data-expanded';
+    mf.attrSelected = 'data-selected';
 
     /**
      * 
      * @returns {mf.MFTreeView} 
      */
     function tv() {
-        if(arguments.length){
+        if (arguments.length) {
             var obj = arguments[0];
-            if(typeof obj == 'object'){
-                if('clientHeight' in obj){
+            if (typeof obj == 'object') {
+                if ('clientHeight' in obj) {
                     return obj.closest(sprintf('[%s="%s"]', mf.attrAnc, mf.ancTreeView)).node.owner;
                 }
-                if(obj.hasOwnProperty('owner')){
+                if (obj.hasOwnProperty('owner')) {
                     return obj.owner;
                 }
             }
@@ -52,6 +53,7 @@
         mf.on(this.element, 'onDrawNode', this.onDrawNode);
         mf.on(this.element, 'onDrawRoot', this.onDrawRoot);
         mf.on(this.element, 'onLoadTreeData', this.onLoadTreeData);
+        mf.on(this.element, 'onSelectNode', this.onSelectNode);
         mf.on(this.element, 'mousedown, onmousedown', this.onMouseDown);
         mf.on(this.element, 'mouseup, onmouseup', this.onMouseUp);
         mf.on(this.element, 'mousemove, onmousemove', this.onMouseMove);
@@ -60,6 +62,20 @@
         //return this;
     };
     mf.MFTreeView.prototype = {
+        /* def options */
+        multipleSelect: false,
+        _selected: [],
+        selected: function (node) {
+            if (!arguments.length) {
+                return this._selected;
+            } else {
+                this._selected.push(node);
+                mf.fire(this.element, 'onSelectNode', {detail: node});
+            }
+        },
+        clearSelection: function () {
+
+        },
         element: {},
         treeNodes: {},
         loadData: function (url) {
@@ -108,6 +124,9 @@
         onDrawRoot: function (e) {
             //console.log(this, e);
         },
+        onSelectNode: function (e) {
+            console.log(e, e.detail);
+        },
         /**
          * @var this {HTMLElement->mf.MFTreeNode.node.element}
          * @param {onLoadTreeData} e
@@ -128,9 +147,11 @@
                 mf.dragElement = el;
                 mf.dragElement.sX = e.pageX;
                 mf.dragElement.sY = e.pageY;
-                if (!mf.dragElement.avatar) {
-                    mf.dragElement.node.owner._createAvatar(e);
-                }
+                el.node.toggleSelection();
+                //el.node.owner.selected(el.node);
+//                if (!mf.dragElement.avatar) {
+//                    mf.dragElement.node.owner._createAvatar(e);
+//                }
             }
         },
         onMouseUp: function (e) {
@@ -182,6 +203,24 @@
             this.element.setAttribute(mf.attrAnc, mf.ancTreeNode);
             this.element.node = this;
             mf.fire(this.owner.element, 'onDrawNode', {detail: this});
+        },
+        /**
+         * 
+         * @param {mf.MFTreeNode} node
+         * @returns {mf.MFTreeNode}
+         */
+        toggleSelection: function () {
+            this.isSelected() ? this.unselect() : this.select();
+            return this;
+        },
+        select: function () {
+            this.element.setAttribute(mf.attrSelected, true);
+        },
+        unselect: function () {
+            this.element.setAttribute(mf.attrSelected, false);
+        },
+        isSelected: function () {
+            return this.element.hasAttribute(mf.attrSelected) && this.element.getAttribute(mf.attrSelected).toBool();
         }
     };
     mf.MFTreeNodes = function (parent) {
